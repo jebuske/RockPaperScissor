@@ -42,6 +42,7 @@ event LogWithdrawal(uint amount, address withdrawer);
   {
     require(!usedIds[_id]);
     require(_player2 != msg.sender);
+    require(_player2 != address(0));
     require(msg.value > 0);
     require(_deadlineHashedMove > 0);
     require(_deadlineRevealMove > _deadlineHashedMove+2);
