@@ -54,7 +54,7 @@ event LogWithdrawal(uint amount, address withdrawer);
     LogGameCreation(msg.sender, _player2, msg.value, _deadlineHashedMove, _deadlineRevealMove);
   }
 
-//both players should send in their hashed playermove before the deadline
+//both players should send in their hashed playermove before the deadline. PlayerMoveHash should contain a uint between 1 and 3 and a secret password
   function sendHashedPayerMove(uint _gameid, bytes32 _playerMoveHash)
   {
     require (now <= games[_gameid].deadlineHashedMove);
@@ -97,13 +97,23 @@ event LogWithdrawal(uint amount, address withdrawer);
     require (now > games[_gameid].deadlineRevealMove);
   address player1 = games[_gameid].player1;
   address player2 = games[_gameid].player2;
-  if (games[_gameid].player1Move%3+1 == games[_gameid].player2Move){
-   withdrawals[player1] = games[_gameid].stake;
-   LogWinner(player1);
+  if (games[_gameid].player1Move == 0 && games[_gameid].player2Move == 0){
+    withdrawals[player1] = games[_gameid].stake/2;
+    withdrawals[player2] = games[_gameid].stake/2;
   }
-  else if (games[_gameid].player2Move%3+1 == games[_gameid].player1Move){
-    withdrawals[player2] = games[_gameid].stake;
-    LogWinner(player2);
+  if (games[_gameid].player1Move == 0){
+    withdrawals[player2] = games[_gameid].stake/2;
+  }
+  if (games[_gameid].player2Move == 0){
+    withdrawals[player1] = games[_gameid].stake/2;
+  }
+  if (games[_gameid].player1Move%3+1 == games[_gameid].player2Move){
+   withdrawals[player2] = games[_gameid].stake;
+   LogWinner(player2);
+  }
+  if (games[_gameid].player2Move%3+1 == games[_gameid].player1Move){
+    withdrawals[player1] = games[_gameid].stake;
+    LogWinner(player1);
   }
   else {
     withdrawals[player1] = games[_gameid].stake/2;
